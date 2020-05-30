@@ -1,11 +1,21 @@
+# This is a program that uses the ast module
+# for parsing the program.
+# The tree is then analysed for various tokens.
+
+
 import ast
 from pprint import pprint
 import regex
 
+# Analyzer class inherits the ast.NodeVisitor class
+# check the python_grammar file to get the list of grammar
+# the grammar can be used with the visit_x function
+# x is to be found in the python_grammar file
 
 class Analyzer(ast.NodeVisitor):
     def __init__(self):
         self.stats = {"import": [],"call":[],"function":[],"class":[]}
+
 
     def visit_FunctionDef(self, node):
         name = node.name
@@ -99,19 +109,23 @@ def returnBlock(lineno,address):
             currentIndent = (len(line.rstrip())-len(line.lstrip())+1)
         return block
 
-
+# print the block of code on given the block
 def printBlock(block):
     for x in block:
         print(x)
+
 def main():
+    #change file here
     file_address = 'demo.py'
+
+    # The following code creates the parsing tree
     with open(file_address, "r") as source:
         tree = ast.parse(source.read())
 
 
-    analyzer = Analyzer()
-    analyzer.visit(tree)
-    #analyzer.report()
+    analyzer = Analyzer()  #created object for traversal
+    analyzer.visit(tree)   #traveral
+    #analyzer.report()  #uncomment to get the list of found tokens
     classList = analyzer.stats["class"]
     funcList = analyzer.stats["function"]
     call_lines =  analyzer.stats["call"]
@@ -127,7 +141,7 @@ def main():
              if code == 8:
                  callnameList.append(regx[0])
 
-    for s in callnameList:
+    for s in callnameList:  #search for callnames in funcList
         for x,y,z in funcList:
             if x==s:
                 printBlock(returnBlock(z,file_address))
