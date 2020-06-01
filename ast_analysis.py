@@ -40,8 +40,7 @@ class Analyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Call(self, node):
-        if node.col_offset == 0:
-            self.stats["call"].append(node.lineno)
+        self.stats["call"].append(node.lineno)
         self.generic_visit(node)
 
     def visit_Import(self, node):
@@ -56,9 +55,6 @@ class Analyzer(ast.NodeVisitor):
 
     def report(self):
         pprint(self.stats)
-
-
-
 
 
 #prints the regex value of a line
@@ -114,6 +110,10 @@ def printBlock(block):
     for x in block:
         print(x)
 
+
+#check the indentation level
+#def checkIndent(lineno):
+
 def main():
     #change file here
     file_address = 'demo.py'
@@ -125,7 +125,7 @@ def main():
 
     analyzer = Analyzer()  #created object for traversal
     analyzer.visit(tree)   #traveral
-    #analyzer.report()  #uncomment to get the list of found tokens
+    analyzer.report()  #uncomment to get the list of found tokens
     classList = analyzer.stats["class"]
     funcList = analyzer.stats["function"]
     call_lines =  analyzer.stats["call"]
@@ -140,7 +140,9 @@ def main():
                  callnameList.append(regx[1])
              if code == 8:
                  callnameList.append(regx[0])
-
+             if code == 7:
+                 callnameList.append(regx[1])
+    print(callnameList)
     for s in callnameList:  #search for callnames in funcList
         for x,y,z in funcList:
             if x==s:
